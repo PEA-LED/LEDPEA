@@ -8,14 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700;900&family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
-<style>
-.top-nav{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 28px;background:#0b1220;border-bottom:1px solid rgba(212,162,76,.18);font-family:Sarabun,sans-serif;position:sticky;top:0;z-index:20}.nav-brand{font-weight:700;color:#f3ead7}.nav-actions{display:flex;align-items:center;gap:16px;font-size:13px;color:#b8c0cc}.admin-link{display:inline-block;padding:8px 14px;border:1px solid #d4a24c;border-radius:6px;color:#f3ead7;text-decoration:none}.admin-link:hover{background:rgba(212,162,76,.12)}@media(max-width:600px){.top-nav{padding:12px 14px}.nav-brand{font-size:13px}.nav-actions{gap:8px;font-size:11px}.admin-link{padding:7px 9px}}</style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<style>.top-nav{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 28px;background:#0b1220;border-bottom:1px solid rgba(212,162,76,.18);font-family:Sarabun,sans-serif;position:sticky;top:0;z-index:20}.nav-brand{font-weight:700;color:#f3ead7}.nav-actions{display:flex;align-items:center;gap:16px;font-size:13px;color:#b8c0cc}.admin-link{display:inline-block;padding:8px 14px;border:1px solid #d4a24c;border-radius:6px;color:#f3ead7;text-decoration:none}.admin-link:hover{background:rgba(212,162,76,.12)}@media(max-width:600px){.top-nav{padding:12px 14px}.nav-brand{font-size:13px}.nav-actions{gap:8px;font-size:11px}.admin-link{padding:7px 9px}}</style></head>
 
 <body>
-    <nav class="top-nav"><div class="nav-brand">PEA LED Dashboard</div><div class="nav-actions"><span id="dataMode">● กำลังเชื่อมต่อ...</span><a href="login.html" class="admin-link">เข้าสู่ระบบแอดมิน</a></div></nav>
+<nav class="top-nav"><div class="nav-brand">PEA LED Dashboard</div><div class="nav-actions"><span id="dataMode">● กำลังเชื่อมต่อ...</span><a href="login.html" class="admin-link">เข้าสู่ระบบแอดมิน</a></div></nav>
 
     <header class="hero">
         <div class="eyebrow">PEA · การไฟฟ้าส่วนภูมิภาค</div>
@@ -32,11 +30,11 @@
             <div class="stat-label">สถานที่ในโครงการทั้งหมด</div>
         </div>
         <div class="stat-card">
-            <div class="stat-val teal" id="statBaht">0.00</div>
+            <div class="stat-val teal">3,328,008.30</div>
             <div class="stat-label">บาท/ปี · ค่าไฟฟ้าที่ประหยัดได้ต่อปี</div>
         </div>
         <div class="stat-card">
-            <div class="stat-val" id="statCo2">0.00</div>
+            <div class="stat-val">490.23</div>
             <div class="stat-label">tCO₂eq/ปี · การลดการปล่อยคาร์บอน</div>
         </div>
         <div class="stat-card">
@@ -55,6 +53,53 @@
             <div class="chart-wrap">
                 <div class="bars" id="barsChart"></div>
             </div>
+        </section>
+
+
+        <section id="province-trend-section">
+            <div class="section-head">
+                <div>
+                    <h2>แนวโน้มการประหยัดพลังงานรายจังหวัด</h2>
+                    <div class="section-note">เลือกจังหวัดเพื่อดูการเปลี่ยนแปลงของข้อมูลในแต่ละปี พร้อมแสดงว่าค่าเพิ่มขึ้นหรือลดลงจากปีก่อนหน้า</div>
+                </div>
+            </div>
+            <div class="analysis-controls controls">
+                <select id="provinceFilter" aria-label="เลือกจังหวัด"></select>
+                <select id="provinceMetric" aria-label="เลือกตัวชี้วัด">
+                    <option value="kwh">หน่วยไฟฟ้าที่ประหยัดได้ (kWh/ปี)</option>
+                    <option value="baht">ค่าไฟฟ้าที่ประหยัดได้ (บาท/ปี)</option>
+                    <option value="co2">การลด CO₂ (tCO₂eq/ปี)</option>
+                </select>
+            </div>
+            <div class="trend-grid">
+                <div class="chart-wrap trend-chart-wrap"><canvas id="provinceTrendChart"></canvas></div>
+                <div class="trend-summary" id="provinceTrendSummary"></div>
+            </div>
+            <div class="trend-table-wrap table-wrap">
+                <table class="trend-table">
+                    <thead><tr><th>ปี</th><th>ค่า</th><th>เทียบกับปีก่อนหน้าที่มีข้อมูล</th><th>สถานะ</th></tr></thead>
+                    <tbody id="provinceTrendTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="region-summary-section">
+            <div class="section-head">
+                <div>
+                    <h2>สรุปผลการประหยัดพลังงานรายภาค</h2>
+                    <div class="section-note">เปรียบเทียบแนวโน้มรายปีของ 4 ภาค โดยคำนวณจากข้อมูลสถานที่ที่มีข้อมูลของตัวชี้วัดนั้น</div>
+                </div>
+            </div>
+            <div class="analysis-controls controls">
+                <select id="regionMetric" aria-label="ตัวชี้วัดรายภาค">
+                    <option value="kwh">หน่วยไฟฟ้าที่ประหยัดได้ (kWh/ปี)</option>
+                    <option value="baht">ค่าไฟฟ้าที่ประหยัดได้ (บาท/ปี)</option>
+                    <option value="co2">การลด CO₂ (tCO₂eq/ปี)</option>
+                    <option value="sites">จำนวนสถานที่ที่มีข้อมูล</option>
+                </select>
+            </div>
+            <div class="region-cards" id="regionCards"></div>
+            <div class="chart-wrap trend-chart-wrap"><canvas id="regionTrendChart"></canvas></div>
         </section>
 
         <section id="table-section">
@@ -105,6 +150,7 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <script src="script.js"></script>
 </body>
 
